@@ -683,10 +683,10 @@ cv::Mat  ARUCO_initialize(const std::vector<reslam::MarkerObservation> &markers1
 
     //compte the marker poses (both the good and other one)
      std::vector<std::vector<std::pair<cv::Mat,double>>> marker_poses_v1,marker_poses_v2;
-     _debug_msg(cp.Distorsion,10);
+     _debug_msg(cp.Distortion,10);
     for(size_t i=0;i<ms1.size();i++){
-        marker_poses_v1.push_back(IPPE::solvePnP_(markerSize,ms1[i].und_corners,cp.CameraMatrix,cp.Distorsion));
-        marker_poses_v2.push_back(IPPE::solvePnP_(markerSize,ms2[i].und_corners,cp.CameraMatrix,cp.Distorsion));
+        marker_poses_v1.push_back(IPPE::solvePnP_(markerSize,ms1[i].und_corners,cp.CameraMatrix,cp.Distortion));
+        marker_poses_v2.push_back(IPPE::solvePnP_(markerSize,ms2[i].und_corners,cp.CameraMatrix,cp.Distortion));
     }
 
 
@@ -799,7 +799,7 @@ cv::Mat ARUCO_bestMarkerPose(const vector<reslam::MarkerObservation> &marker_vie
     vector<poseinfo> solutions;
     
     for(size_t i=0;i<marker_views.size();i++){
-        auto ss=  IPPE::solvePnP_(marker_views[i].points3d,marker_views[i].und_corners,cp.CameraMatrix,cp.Distorsion);
+        auto ss=  IPPE::solvePnP_(marker_views[i].points3d,marker_views[i].und_corners,cp.CameraMatrix,cp.Distortion);
         poseinfo pi;        
         pi.pose_g2m= frameposes_f2g[i].convert().inv() * ss[0].first; // g2f  * f2m
         solutions.push_back(pi);

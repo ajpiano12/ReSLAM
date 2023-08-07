@@ -1,5 +1,5 @@
 /**
-* This file is part of  UCOSLAM
+* This file is part of UCOSLAM
 *
 * Copyright (C) 2018 Rafael Munoz Salinas <rmsalinas at uco dot es> (University of Cordoba)
 *

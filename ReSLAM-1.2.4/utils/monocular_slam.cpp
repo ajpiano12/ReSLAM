@@ -226,9 +226,9 @@ int main(int argc,char **argv){
         if(undistort ){
             if( undistMap.size()==0){
                 undistMap.resize(2);
-                cv::initUndistortRectifyMap(image_params.CameraMatrix,image_params.Distorsion,cv::Mat(),cv::Mat(),image_params.CamSize,CV_32FC1,undistMap[0],undistMap[1]);
+                cv::initUndistortRectifyMap(image_params.CameraMatrix,image_params.Distortion,cv::Mat(),cv::Mat(),image_params.CamSize,CV_32FC1,undistMap[0],undistMap[1]);
             }
-            image_params.Distorsion.setTo(cv::Scalar::all(0));
+            image_params.Distortion.setTo(cv::Scalar::all(0));
         }
         //Create the viewer to see the images and the 3D
         reslam::MapViewer TheViewer;
@@ -275,7 +275,7 @@ int main(int argc,char **argv){
             if(undistort ){               
                 cv::remap(in_image,auxImage,undistMap[0],undistMap[1],cv::INTER_CUBIC);
                 in_image=auxImage;
-                image_params.Distorsion.setTo(cv::Scalar::all(0));
+                image_params.Distortion.setTo(cv::Scalar::all(0));
             }
 
 

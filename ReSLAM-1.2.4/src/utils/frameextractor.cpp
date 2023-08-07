@@ -211,9 +211,9 @@ void FrameExtractor::processArray(const vector<cv::Mat> &images, const ImagePara
 //    cv::Mat img_match2, lCopy, rCopy;
 
 //    cv::undistort(InputImages[0].im_resized, lCopy, InputImages[0].ip_resized.CameraMatrix,
-//            InputImages[0].ip_resized.Distorsion, cv::noArray());
+//            InputImages[0].ip_resized.Distortion, cv::noArray());
 //    cv::undistort(InputImages[1].im_resized, rCopy, InputImages[0].ip_resized.arrayCamMatrix[0],
-//            InputImages[0].ip_resized.arrayDistorsion[0], cv::noArray());
+//            InputImages[0].ip_resized.arrayDistortion[0], cv::noArray());
 
 //    drawMatches(lCopy, frame.und_kpts , rCopy, und_trainKpts, g_matches, img_match2);
 //    cv::resize(img_match2, img_match2, cv::Size(1800,900));
@@ -255,9 +255,9 @@ void FrameExtractor::getMatches(std::vector<cv::DMatch>& matches,  const Frame &
 ////////Draw
 //        cv::Mat leftImg, rightImg;
 //        cv::undistort(InputImages[0].im_resized, leftImg, InputImages[0].ip_resized.CameraMatrix,
-//                InputImages[0].ip_resized.Distorsion, cv::noArray());
+//                InputImages[0].ip_resized.Distortion, cv::noArray());
 //        cv::undistort(InputImages[1].im_resized, rightImg, InputImages[0].ip_resized.arrayCamMatrix[0],
-//                InputImages[0].ip_resized.arrayDistorsion[0], cv::noArray());
+//                InputImages[0].ip_resized.arrayDistortion[0], cv::noArray());
 //        cv::cvtColor(leftImg,leftImg,cv::COLOR_GRAY2BGR);
 //        cv::cvtColor(rightImg,rightImg,cv::COLOR_GRAY2BGR);
 ////        cv::drawKeypoints(leftImg,frame.und_kpts,leftImg);
@@ -377,7 +377,7 @@ void FrameExtractor::getMatches(std::vector<cv::DMatch>& matches,  const Frame &
 //                test_match.push_back(match);
 //                cv::Mat rightCopy;
 //                cv::undistort(InputImages[1].im_resized, rightCopy, InputImages[0].ip_resized.arrayCamMatrix[0],
-//                        InputImages[0].ip_resized.arrayDistorsion[0], cv::noArray());
+//                        InputImages[0].ip_resized.arrayDistortion[0], cv::noArray());
 
 //                //Draw epipolar
 //                cv::Point2f undist_p1 = cv::Point2f(0,-ep_c/ep_b);
@@ -675,7 +675,7 @@ void FrameExtractor::extractFrame(const ImgInfo &Iinfo,   Frame &frame, uint32_t
                 uslm_marker.points3d=m.points3d;
                 uslm_marker.corners=m.corners;
                 uslm_marker.dict_info=m.info;
-                auto sols=IPPE::solvePnP_(m.points3d ,m.corners, Iinfo.ip_org.CameraMatrix,Iinfo.ip_org.Distorsion);
+                auto sols=IPPE::solvePnP_(m.points3d ,m.corners, Iinfo.ip_org.CameraMatrix,Iinfo.ip_org.Distortion);
                 for(int a=0;a<2;a++){
                     uslm_marker.poses.errs[a]=sols[a].second;
                     uslm_marker.poses.sols[a]=sols[a].first.clone();
@@ -760,7 +760,7 @@ void FrameExtractor::extractFrame(const ImgInfo &Iinfo,   Frame &frame, uint32_t
     //set image projection limits
     frame.minXY=cv::Point2f(0,0);
     frame.maxXY=cv::Point2f(frame.imageParams.CamSize.width,frame.imageParams.CamSize.height);
-    if(frame.imageParams.Distorsion.total()!=0){
+    if(frame.imageParams.Distortion.total()!=0){
         //take the points and remove distortion
         vector<cv::Point2f> corners={frame.minXY,frame.maxXY};
         frame.imageParams.undistortPoints(corners);

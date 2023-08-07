@@ -171,11 +171,11 @@ aruco::CameraParameters aruco_cameraCalibrate(std::vector<std::vector<aruco::Mar
     flag |= cv::fisheye::CALIB_RECOMPUTE_EXTRINSIC;
     flag |= cv::fisheye::CALIB_CHECK_COND;
     flag |= cv::fisheye::CALIB_FIX_SKEW;
-        err2=cv::fisheye::calibrate(calib_p3d, calib_p2d, cameraParams.CamSize, cameraParams.CameraMatrix, cameraParams.Distorsion, vr, vt,flag,cv::TermCriteria(3, 20, 1e-6));
+        err2=cv::fisheye::calibrate(calib_p3d, calib_p2d, cameraParams.CamSize, cameraParams.CameraMatrix, cameraParams.Distortion, vr, vt,flag,cv::TermCriteria(3, 20, 1e-6));
 */
-    err=cv::calibrateCamera(calib_p3d, calib_p2d, cameraParams.CamSize, cameraParams.CameraMatrix, cameraParams.Distorsion, vr, vt);
+    err=cv::calibrateCamera(calib_p3d, calib_p2d, cameraParams.CamSize, cameraParams.CameraMatrix, cameraParams.Distortion, vr, vt);
     cameraParams.CameraMatrix.convertTo(cameraParams.CameraMatrix,CV_32F);
-    cameraParams.Distorsion.convertTo(cameraParams.Distorsion,CV_32F);
+    cameraParams.Distortion.convertTo(cameraParams.Distortion,CV_32F);
     if (currRepjErr!=0) *currRepjErr=err;
 
     stringstream str;

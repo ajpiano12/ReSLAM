@@ -56,7 +56,7 @@ inline void operator()(const cv::Mat &in,cv::Mat &out)    {
         if(!imgP.isValid()  || imgP!=ip  || imgP.CamSize!=im.size()){
             imgP=ip;
             imgP.resize(im.size());
-            cv::initUndistortRectifyMap(imgP.CameraMatrix,imgP.Distorsion,cv::Mat(),cv::Mat(),imgP.CamSize,CV_32FC1,mapx,mapy);
+            cv::initUndistortRectifyMap(imgP.CameraMatrix,imgP.Distortion,cv::Mat(),cv::Mat(),imgP.CamSize,CV_32FC1,mapx,mapy);
         }
     }
 private:

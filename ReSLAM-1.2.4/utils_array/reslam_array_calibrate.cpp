@@ -103,8 +103,8 @@ int main(int argc, char** argv)
             fs << "img_width_cam1"<<TheCalibrator._camParams[1].CamSize.width;
             fs << "img_height_cam1"<<TheCalibrator._camParams[1].CamSize.height;
 
-            fs << "M_cam0" << TheCalibrator._camParams[0].CameraMatrix  << "D_cam0" << TheCalibrator._camParams[0].Distorsion;
-            fs << "M_cam1" << TheCalibrator._camParams[1].CameraMatrix  << "D_cam1" << TheCalibrator._camParams[1].Distorsion;
+            fs << "M_cam0" << TheCalibrator._camParams[0].CameraMatrix  << "D_cam0" << TheCalibrator._camParams[0].Distortion;
+            fs << "M_cam1" << TheCalibrator._camParams[1].CameraMatrix  << "D_cam1" << TheCalibrator._camParams[1].Distortion;
             fs << "R_cam0_cam1" << TheCalibrator.getRvec()              << "T_cam0_cam1" << TheCalibrator.getTvec();
             fs.release();
         }

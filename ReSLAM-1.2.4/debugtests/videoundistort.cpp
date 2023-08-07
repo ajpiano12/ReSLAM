@@ -12,7 +12,7 @@ int main(int argc,char **argv){
 
     vector<cv::Mat> undistMap;
     undistMap.resize(2);
-    cv::initUndistortRectifyMap(image_params.CameraMatrix,image_params.Distorsion,cv::Mat(),cv::Mat(),image_params.CamSize,CV_32FC1,undistMap[0],undistMap[1]);
+    cv::initUndistortRectifyMap(image_params.CameraMatrix,image_params.Distortion,cv::Mat(),cv::Mat(),image_params.CamSize,CV_32FC1,undistMap[0],undistMap[1]);
 
     cv::VideoWriter outv;
 

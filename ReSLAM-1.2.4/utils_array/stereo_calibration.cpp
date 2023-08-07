@@ -82,7 +82,7 @@ double reprj_error( const std::vector<cv::Point3f> &objPoints, const std::vector
     std::vector<cv::Point2f> prepj;
      cv::Mat rv,tv;
      getRTfromMatrix44(rt44,rv,tv);
-    cv::projectPoints(objPoints,rv,tv,imp.CameraMatrix,imp.Distorsion,prepj);
+    cv::projectPoints(objPoints,rv,tv,imp.CameraMatrix,imp.Distortion,prepj);
     double sum=0;
     int nvalid=0;
     for(size_t i=0;i<prepj.size();i++){
@@ -133,8 +133,8 @@ double __stereo_solve(const std::vector<std::vector<std::vector<cv::Point3f>>>& 
 
     for(auto &cp:camParams)
     {
-        if ( cp.Distorsion.type() != CV_32F )
-            cp.Distorsion.convertTo(cp.Distorsion,CV_32F);
+        if ( cp.Distortion.type() != CV_32F )
+            cp.Distortion.convertTo(cp.Distortion,CV_32F);
         if ( cp.CameraMatrix.type() != CV_32F )
             cp.CameraMatrix.convertTo(cp.CameraMatrix,CV_32F);
     }
@@ -158,11 +158,11 @@ double __stereo_solve(const std::vector<std::vector<std::vector<cv::Point3f>>>& 
         }
 
         for(size_t i=0; i<cp.size(); i++){
-            sol(14 + i*5) = cp[i].Distorsion.ptr<float>(0)[0]; //k1
-            sol(15 + i*5) = cp[i].Distorsion.ptr<float>(0)[1]; //k2
-            sol(16 + i*5) = cp[i].Distorsion.ptr<float>(0)[2]; //p1
-            sol(17 + i*5) = cp[i].Distorsion.ptr<float>(0)[3]; //p2
-            sol(18 + i*5) = cp[i].Distorsion.ptr<float>(0)[4]; //p3
+            sol(14 + i*5) = cp[i].Distortion.ptr<float>(0)[0]; //k1
+            sol(15 + i*5) = cp[i].Distortion.ptr<float>(0)[1]; //k2
+            sol(16 + i*5) = cp[i].Distortion.ptr<float>(0)[2]; //p1
+            sol(17 + i*5) = cp[i].Distortion.ptr<float>(0)[3]; //p2
+            sol(18 + i*5) = cp[i].Distortion.ptr<float>(0)[4]; //p3
         }
         return sol;
     };
@@ -185,11 +185,11 @@ double __stereo_solve(const std::vector<std::vector<std::vector<cv::Point3f>>>& 
             _camParams[i].CameraMatrix.ptr<float>(2)[1] = 0;
             _camParams[i].CameraMatrix.ptr<float>(2)[2] = 1;
 
-            _camParams[i].Distorsion.ptr<float>(0)[0] = sol(14 + i*5); //k1
-            _camParams[i].Distorsion.ptr<float>(0)[1] = sol(15 + i*5); //k2
-            _camParams[i].Distorsion.ptr<float>(0)[2] = sol(16 + i*5); //p1
-            _camParams[i].Distorsion.ptr<float>(0)[3] = sol(17 + i*5); //p2
-            _camParams[i].Distorsion.ptr<float>(0)[4] = sol(18 + i*5); //p3
+            _camParams[i].Distortion.ptr<float>(0)[0] = sol(14 + i*5); //k1
+            _camParams[i].Distortion.ptr<float>(0)[1] = sol(15 + i*5); //k2
+            _camParams[i].Distortion.ptr<float>(0)[2] = sol(16 + i*5); //p1
+            _camParams[i].Distortion.ptr<float>(0)[3] = sol(17 + i*5); //p2
+            _camParams[i].Distortion.ptr<float>(0)[4] = sol(18 + i*5); //p3
         }
     };
 
@@ -220,7 +220,7 @@ double __stereo_solve(const std::vector<std::vector<std::vector<cv::Point3f>>>& 
             //cross error using extrinsic
             for(size_t c=0; c<camParams.size(); c++)
             {
-                cv::projectPoints(calib3d[c][imgId], vr[c], vt[c], camParams[c].CameraMatrix, camParams[c].Distorsion, p2d_rej);
+                cv::projectPoints(calib3d[c][imgId], vr[c], vt[c], camParams[c].CameraMatrix, camParams[c].Distortion, p2d_rej);
                 for (size_t i = 0; i < p2d_rej.size(); i++)
                 {
                     err(err_idx++) = p2d_rej[i].x - calib2d[c][imgId][i].x;
@@ -234,7 +234,7 @@ double __stereo_solve(const std::vector<std::vector<std::vector<cv::Point3f>>>& 
             {
                 cv::Mat r,t;
                 getRTfromMatrix44(cameraPose[c][imgId], r, t);
-                cv::projectPoints(calib3d[c][imgId], r, t, camParams[c].CameraMatrix, camParams[c].Distorsion, p2d_rej);
+                cv::projectPoints(calib3d[c][imgId], r, t, camParams[c].CameraMatrix, camParams[c].Distortion, p2d_rej);
                 for (size_t i = 0; i < p2d_rej.size(); i++)
                 {
                     err(err_idx++) = p2d_rej[i].x - calib2d[c][imgId][i].x;
@@ -340,7 +340,7 @@ void StereoCalibration::calibration(const std::vector<std::string>& imagelist, b
 
         cout << "Starting calibration cam"<< c << endl;
         vector<cv::Mat> vr, vt;
-        cv::calibrateCamera(calib_p3d[c], calib_p2d[c], _camParams[c].CamSize, _camParams[c].CameraMatrix, _camParams[c].Distorsion, vr, vt);
+        cv::calibrateCamera(calib_p3d[c], calib_p2d[c], _camParams[c].CamSize, _camParams[c].CameraMatrix, _camParams[c].Distortion, vr, vt);
 
         _camParams[c].saveToFile("");
 
@@ -348,7 +348,7 @@ void StereoCalibration::calibration(const std::vector<std::string>& imagelist, b
         std::pair<double,int> sum={0,0};
         for(size_t v=0;v<calib_p2d[c].size();v++){
             vector<cv::Point2f> repj;
-            cv::projectPoints(calib_p3d[c][v],vr[v],vt[v],_camParams[c].CameraMatrix, _camParams[c].Distorsion, repj);
+            cv::projectPoints(calib_p3d[c][v],vr[v],vt[v],_camParams[c].CameraMatrix, _camParams[c].Distortion, repj);
             for(size_t p=0;p<calib_p3d[c][v].size();p++){
                 sum.first+=cv::norm(repj[p]-calib_p2d[c][v][p]);
                 sum.second++;

@@ -44,8 +44,8 @@ reslam::ImageParams getASUSImageParams(){
 
     reslam::ImageParams  IP;
     IP.CameraMatrix= (cv::Mat_<float>(3,3) <<  517.306408,0,318.643040,0,516.469215,255.313989,0,0,1);
-    IP.Distorsion= (cv::Mat_<float>(1,5) <<  0.262383,-0.953104, -0.005358,0.002628,1.163314);
-//    IP.Distorsion= (cv::Mat_<float>(1,5) <<  0,0,0,0,0);
+    IP.Distortion= (cv::Mat_<float>(1,5) <<  0.262383,-0.953104, -0.005358,0.002628,1.163314);
+//    IP.Distortion= (cv::Mat_<float>(1,5) <<  0,0,0,0,0);
     IP.CamSize=cv::Size(640,480);
     IP.bl=0.07;//camera base line
     //IP.cameraType=reslam::ImageParams::CAMTYPE_STEREO;
@@ -90,7 +90,7 @@ int main(int argc,char **argv){
 
         reslam::ImageParams image_params=getASUSImageParams();
         image_params.CameraMatrix=cv::Mat(cv::Matx33f(reader->getColorCamMat()));
-        image_params.Distorsion=cv::Mat(cv::Matx<float,5,1>(reader->getColorDistCoeffs()));
+        image_params.Distortion=cv::Mat(cv::Matx<float,5,1>(reader->getColorDistCoeffs()));
         image_params.CamSize=reader->getColorImageSize();
         reslam::Params params;
 

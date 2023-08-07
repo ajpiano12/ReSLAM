@@ -98,11 +98,11 @@ or implied, of Rafael Muñoz Salinas.
         /**Calculates the extrinsics (Rvec and Tvec) of the marker with respect to the camera
          * @param markerSize size of the marker side expressed in meters
          * @param CameraMatrix matrix with camera parameters (fx,fy,cx,cy)
-         * @param Distorsion matrix with distorsion parameters (k1,k2,p1,p2)
+         * @param Distortion matrix with distortion parameters (k1,k2,p1,p2)
          * @param setYPerpendicular If set the Y axis will be perpendicular to the surface. Otherwise, it will be the Z
          * axis
          */
-        void calculateExtrinsics(float markerSize, cv::Mat CameraMatrix, cv::Mat Distorsion = cv::Mat(),
+        void calculateExtrinsics(float markerSize, cv::Mat CameraMatrix, cv::Mat Distortion = cv::Mat(),
                                  bool setYPerpendicular = true);
 
         /**Given the extrinsic camera parameters returns the GL_MODELVIEW matrix for opengl.

@@ -310,7 +310,7 @@ namespace aruco
             throw cv::Exception(9004,
                                 "!CP.isValid(): invalid camera parameters. It is not possible to calculate extrinsics",
                                 "calculateExtrinsics", __FILE__, __LINE__);
-        calculateExtrinsics(markerSize, CP.CameraMatrix, CP.Distorsion, setYPerpendicular);
+        calculateExtrinsics(markerSize, CP.CameraMatrix, CP.Distortion, setYPerpendicular);
     }
 
     void print(cv::Point3f p, std::string cad)

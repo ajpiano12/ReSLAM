@@ -1,5 +1,5 @@
 /**
-* This file is part of  UCOSLAM
+* This file is part of UCOSLAM
 *
 * Copyright (C) 2018 Rafael Munoz Salinas <rmsalinas at uco dot es> (University of Cordoba)
 *
@@ -15,7 +15,8 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with UCOSLAM. If not, see <http://wwmap->gnu.org/licenses/>.
-*/#ifndef ucoslam_ImageParmas_H
+*/
+#ifndef ucoslam_ImageParmas_H
 #define ucoslam_ImageParmas_H
 #include <opencv2/core/core.hpp>
 #include "reslam_exports.h"
@@ -31,11 +32,11 @@ namespace reslam{
         // 3x3 matrix (fx 0 cx, 0 fy cy, 0 0 1)
         cv::Mat CameraMatrix;
         //  distortion matrix
-        cv::Mat Distorsion;
+        cv::Mat Distortion;
         // size of the image
         cv::Size CamSize;
 
-        std::vector<cv::Mat> arrayCamMatrix, arrayDistorsion, arrayRvec, arrayTvec;
+        std::vector<cv::Mat> arrayCamMatrix, arrayDistortion, arrayRvec, arrayTvec;
         std::vector<cv::Size> multicams_cs;
         bool isArray()const{return arrayCamMatrix.size()!=0;}
         int arraySize()const{return arrayCamMatrix.size()+1;}
@@ -62,9 +63,9 @@ namespace reslam{
             else return arrayCamMatrix[cam-1];
         }
 
-        inline cv::Mat getDistorsion(int cam=0) const{
-            if(cam==0) return Distorsion;
-            else return arrayDistorsion[cam-1];
+        inline cv::Mat getDistortion(int cam=0) const{
+            if(cam==0) return Distortion;
+            else return arrayDistortion[cam-1];
         }
 
         //accessor to the main parameters of the camera model
@@ -96,8 +97,8 @@ namespace reslam{
 
         inline void set_dist(int cam=0, int p=0, float val=0)
         {
-            if(cam==0) Distorsion.ptr<float>(0)[p]=val;
-            else arrayDistorsion[cam-1].ptr<float>(0)[p]=val;
+            if(cam==0) Distortion.ptr<float>(0)[p]=val;
+            else arrayDistortion[cam-1].ptr<float>(0)[p]=val;
         }
 
 
@@ -137,13 +138,13 @@ namespace reslam{
         //returns a version of this without distortion
         ImageParams undistorted()const{
             ImageParams ip=*this;
-            ip.Distorsion.setTo(cv::Scalar::all(0));
+            ip.Distortion.setTo(cv::Scalar::all(0));
             return ip;
         }
 
         void clear(){
             CameraMatrix=cv::Mat();
-            Distorsion=cv::Mat();
+            Distortion=cv::Mat();
             CamSize=cv::Size(-1,-1);
         }
 

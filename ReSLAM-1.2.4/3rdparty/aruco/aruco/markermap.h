@@ -166,7 +166,7 @@ or implied, of Rafael Muñoz Salinas.
         // calculates the camera location w.r.t. the map using the information provided
         // returns the <rvec,tvec>
         std::pair<cv::Mat, cv::Mat> calculateExtrinsics(const std::vector<aruco::Marker>& markers, float markerSize,
-                                                   cv::Mat CameraMatrix, cv::Mat Distorsion);
+                                                   cv::Mat CameraMatrix, cv::Mat Distortion);
 
         // returns string indicating the dictionary
         inline std::string getDictionary() const

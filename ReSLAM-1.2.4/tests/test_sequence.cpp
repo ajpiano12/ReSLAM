@@ -14,8 +14,8 @@ reslam::ImageParams getRGBDImageParams() {
 
     reslam::ImageParams  IP;
     IP.CameraMatrix= (cv::Mat_<float>(3,3) <<  525.0,0,319.5,0,525.0,239.5,0,0,1);
-    IP.Distorsion=cv::Mat::zeros(1,5,CV_32F);
-    IP.Distorsion= (cv::Mat_<float>(1,5) << 0.262383,-0.953104,-0.005358,0.002628,1.163314);
+    IP.Distortion=cv::Mat::zeros(1,5,CV_32F);
+    IP.Distortion= (cv::Mat_<float>(1,5) << 0.262383,-0.953104,-0.005358,0.002628,1.163314);
     IP.CamSize=cv::Size(640,480);
     return IP;
 }

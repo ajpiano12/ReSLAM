@@ -97,7 +97,7 @@ double reprj_error( const std::vector<cv::Point3f> &objPoints, const std::vector
     std::vector<cv::Point2f> prepj;
      cv::Mat rv,tv;
     impl__aruco_getRTfromMatrix44(rt44,rv,tv);
-    cv::projectPoints(objPoints,rv,tv,imp.CameraMatrix,imp.Distorsion,prepj);
+    cv::projectPoints(objPoints,rv,tv,imp.CameraMatrix,imp.Distortion,prepj);
     double sum=0;
     int nvalid=0;
     for(size_t i=0;i<prepj.size();i++){
@@ -355,14 +355,14 @@ inline double getHubberMonoWeight(double SqErr,double Information){
         if (_rvec.empty())
         {  // if no previous data, use from scratch
             cv::Mat rv, tv;
-            auto solutions =  solvePnP_(Marker::get3DPoints(_msize), m, _cam_params.CameraMatrix, _cam_params.Distorsion);
+            auto solutions =  solvePnP_(Marker::get3DPoints(_msize), m, _cam_params.CameraMatrix, _cam_params.Distortion);
             double errorRatio = solutions[1].second / solutions[0].second;
             if (errorRatio < minerrorRatio)
             aruco_private::impl__aruco_getRTfromMatrix44(solutions[0].first, _rvec, _tvec);
         }
         else
         {
-            __aruco_solve_pnp(Marker::get3DPoints(_msize), m, _cam_params.CameraMatrix, _cam_params.Distorsion, _rvec,  _tvec);
+            __aruco_solve_pnp(Marker::get3DPoints(_msize), m, _cam_params.CameraMatrix, _cam_params.Distortion, _rvec,  _tvec);
         }
 
         _rvec.convertTo(m.Rvec,CV_32F);
@@ -435,7 +435,7 @@ inline double getHubberMonoWeight(double SqErr,double Information){
         std::vector<minfo> all_marker_locations;
 
         for(const Marker &marker:mapMarkers){//for ech visible marker
-             auto mpi=solvePnP_(_map_mm[marker.id]. getMarkerSize(),marker,_cam_params.CameraMatrix,_cam_params.Distorsion);
+             auto mpi=solvePnP_(_map_mm[marker.id]. getMarkerSize(),marker,_cam_params.CameraMatrix,_cam_params.Distortion);
             minfo mi;
             mi.id=marker.id;
             mi.err=mpi[0].second;
@@ -525,7 +525,7 @@ inline double getHubberMonoWeight(double SqErr,double Information){
 
             //refine
 
-            __aruco_solve_pnp(p3d, p2d, _cam_params.CameraMatrix, _cam_params.Distorsion, _rvec, _tvec);
+            __aruco_solve_pnp(p3d, p2d, _cam_params.CameraMatrix, _cam_params.Distortion, _rvec, _tvec);
 
             //check distance and rotation difference
             if ( !_prevr.empty() && _maxTranslation>0 && _maxAngle>0){

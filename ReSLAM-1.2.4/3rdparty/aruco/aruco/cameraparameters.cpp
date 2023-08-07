@@ -39,25 +39,25 @@ namespace aruco
     CameraParameters::CameraParameters()
     {
         CameraMatrix = cv::Mat();
-        Distorsion = cv::Mat();
+        Distortion = cv::Mat();
         CamSize = cv::Size(-1, -1);
     }
     /**Creates the object from the info passed
      * @param cameraMatrix 3x3 matrix (fx 0 cx, 0 fy cy, 0 0 1)
-     * @param distorsionCoeff 4x1 matrix (k1,k2,p1,p2)
+     * @param distortionCoeff 4x1 matrix (k1,k2,p1,p2)
      * @param size image size
      */
-    CameraParameters::CameraParameters(cv::Mat cameraMatrix, cv::Mat distorsionCoeff,
+    CameraParameters::CameraParameters(cv::Mat cameraMatrix, cv::Mat distortionCoeff,
                                        cv::Size size)
     {
-        setParams(cameraMatrix, distorsionCoeff, size);
+        setParams(cameraMatrix, distortionCoeff, size);
     }
     /**
      */
     CameraParameters::CameraParameters(const CameraParameters& CI)
     {
         CI.CameraMatrix.copyTo(CameraMatrix);
-        CI.Distorsion.copyTo(Distorsion);
+        CI.Distortion.copyTo(Distortion);
         CamSize = CI.CamSize;
     }
 
@@ -66,32 +66,32 @@ namespace aruco
     CameraParameters& CameraParameters::operator=(const CameraParameters& CI)
     {
         CI.CameraMatrix.copyTo(CameraMatrix);
-        CI.Distorsion.copyTo(Distorsion);
+        CI.Distortion.copyTo(Distortion);
         CamSize = CI.CamSize;
         return *this;
     }
     void CameraParameters::clear(){
         CameraMatrix=cv::Mat();
         CamSize=cv::Size(-1,-1);
-        Distorsion=cv::Mat();
+        Distortion=cv::Mat();
     }
     /**
      */
-    void CameraParameters::setParams(cv::Mat cameraMatrix, cv::Mat distorsionCoeff, cv::Size size)
+    void CameraParameters::setParams(cv::Mat cameraMatrix, cv::Mat distortionCoeff, cv::Size size)
     {
         if (cameraMatrix.rows != 3 || cameraMatrix.cols != 3)
             throw cv::Exception(9000, "invalid input cameraMatrix", "CameraParameters::setParams", __FILE__, __LINE__);
         cameraMatrix.convertTo(CameraMatrix, CV_32FC1);
-        if (distorsionCoeff.total() < 4 || distorsionCoeff.total() >= 7)
-            throw cv::Exception(9000, "invalid input distorsionCoeff", "CameraParameters::setParams", __FILE__,
+        if (distortionCoeff.total() < 4 || distortionCoeff.total() >= 7)
+            throw cv::Exception(9000, "invalid input distortionCoeff", "CameraParameters::setParams", __FILE__,
                                 __LINE__);
         cv::Mat auxD;
 
-        distorsionCoeff.convertTo(Distorsion, CV_32FC1);
+        distortionCoeff.convertTo(Distortion, CV_32FC1);
 
-        //     Distorsion.create(1,4,CV_32FC1);
+        //     Distortion.create(1,4,CV_32FC1);
         //     for (int i=0;i<4;i++)
-        //         Distorsion.ptr<float>(0)[i]=auxD.ptr<float>(0)[i];
+        //         Distortion.ptr<float>(0)[i]=auxD.ptr<float>(0)[i];
 
         CamSize = size;
     }
@@ -136,10 +136,10 @@ namespace aruco
             file << "cx = " << CameraMatrix.at<float>(0, 2) << endl;
             file << "fy = " << CameraMatrix.at<float>(1, 1) << endl;
             file << "cy = " << CameraMatrix.at<float>(1, 2) << endl;
-            file << "k1 = " << Distorsion.at<float>(0, 0) << endl;
-            file << "k2 = " << Distorsion.at<float>(1, 0) << endl;
-            file << "p1 = " << Distorsion.at<float>(2, 0) << endl;
-            file << "p2 = " << Distorsion.at<float>(3, 0) << endl;
+            file << "k1 = " << Distortion.at<float>(0, 0) << endl;
+            file << "k2 = " << Distortion.at<float>(1, 0) << endl;
+            file << "p1 = " << Distortion.at<float>(2, 0) << endl;
+            file << "p2 = " << Distortion.at<float>(3, 0) << endl;
             file << "width = " << CamSize.width << endl;
             file << "height = " << CamSize.height << endl;
         }
@@ -149,7 +149,7 @@ namespace aruco
             fs << "image_width" << CamSize.width;
             fs << "image_height" << CamSize.height;
             fs << "camera_matrix" << CameraMatrix;
-            fs << "distortion_coefficients" << Distorsion;
+            fs << "distortion_coefficients" << Distortion;
         }
     }
 
@@ -219,13 +219,13 @@ namespace aruco
         // convert to 32 and get the 4 first elements only
         cv::Mat mdist32;
         MDist.convertTo(mdist32, CV_32FC1);
-        //     Distorsion.create(1,4,CV_32FC1);
+        //     Distortion.create(1,4,CV_32FC1);
         //     for (int i=0;i<4;i++)
-        //         Distorsion.ptr<float>(0)[i]=mdist32.ptr<float>(0)[i];
+        //         Distortion.ptr<float>(0)[i]=mdist32.ptr<float>(0)[i];
 
-        Distorsion.create(1, 5, CV_32FC1);
+        Distortion.create(1, 5, CV_32FC1);
         for (int i = 0; i < 5; i++)
-            Distorsion.ptr<float>(0)[i] = mdist32.ptr<float>(0)[i];
+            Distortion.ptr<float>(0)[i] = mdist32.ptr<float>(0)[i];
         CamSize.width = w;
         CamSize.height = h;
     }
@@ -235,7 +235,7 @@ namespace aruco
     void CameraParameters::glGetProjectionMatrix(cv::Size orgImgSize, cv::Size size, double proj_matrix[16],
                                                  double gnear, double gfar, bool invert)
     {
-        if (cv::countNonZero(Distorsion) != 0)
+        if (cv::countNonZero(Distortion) != 0)
             std::cerr << "CameraParameters::glGetProjectionMatrix :: The camera has distortion coefficients "
                       << __FILE__ << " " << __LINE__ << endl;
         if (isValid() == false)
@@ -525,7 +525,7 @@ namespace aruco
            str<<" cols: 5"<<endl;
            str<<" dt: f"<<endl;
            str<<" data: [";
-           const float *dif=cp.Distorsion.ptr<float>();
+           const float *dif=cp.Distortion.ptr<float>();
            for(int i=0;i<5;i++){
                str<<dif[i];
                if(i!=4)str<<", ";
@@ -561,8 +561,8 @@ namespace aruco
         };
 
         cp.CameraMatrix=cv::Mat::eye(3,3,CV_32F);
-        cp.Distorsion.create(1,5,CV_32F);
-        cp.Distorsion.setTo(cv::Scalar::all(0));
+        cp.Distortion.create(1,5,CV_32F);
+        cp.Distortion.setTo(cv::Scalar::all(0));
         string line;
         std::getline(str,line);
         if (line.find("%YAML:1.0")==string::npos){
@@ -592,7 +592,7 @@ namespace aruco
                     readingCamera=false;
                 }
                 else if(readingDist){
-                    parseDataLine(line,cp.Distorsion);
+                    parseDataLine(line,cp.Distortion);
                     readingDist=false;
                 }
             }

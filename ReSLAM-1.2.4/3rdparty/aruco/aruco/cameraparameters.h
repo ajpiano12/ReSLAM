@@ -44,7 +44,7 @@ namespace aruco
         // 3x3 matrix (fx 0 cx, 0 fy cy, 0 0 1)
         cv::Mat CameraMatrix;
         //  distortion matrix
-        cv::Mat Distorsion;
+        cv::Mat Distortion;
         // size of the image
         cv::Size CamSize;
 
@@ -53,16 +53,16 @@ namespace aruco
         CameraParameters();
         /**Creates the object from the info passed
          * @param cameraMatrix 3x3 matrix (fx 0 cx, 0 fy cy, 0 0 1)
-         * @param distorsionCoeff 4x1 matrix (k1,k2,p1,p2)
+         * @param distortionCoeff 4x1 matrix (k1,k2,p1,p2)
          * @param size image size
          */
-        CameraParameters(cv::Mat cameraMatrix, cv::Mat distorsionCoeff, cv::Size size);
+        CameraParameters(cv::Mat cameraMatrix, cv::Mat distortionCoeff, cv::Size size);
         /**Sets the parameters
          * @param cameraMatrix 3x3 matrix (fx 0 cx, 0 fy cy, 0 0 1)
-         * @param distorsionCoeff 4x1 matrix (k1,k2,p1,p2)
+         * @param distortionCoeff 4x1 matrix (k1,k2,p1,p2)
          * @param size image size
          */
-        void setParams(cv::Mat cameraMatrix, cv::Mat distorsionCoeff, cv::Size size);
+        void setParams(cv::Mat cameraMatrix, cv::Mat distortionCoeff, cv::Size size);
         /**Copy constructor
          */
         CameraParameters(const CameraParameters& CI);
@@ -71,7 +71,7 @@ namespace aruco
          */
         bool isValid() const
         {
-            return CameraMatrix.rows != 0 && CameraMatrix.cols != 0 && Distorsion.rows != 0 && Distorsion.cols != 0
+            return CameraMatrix.rows != 0 && CameraMatrix.cols != 0 && Distortion.rows != 0 && Distortion.cols != 0
                    && CamSize.width != -1 && CamSize.height != -1;
         }
         /**Assign operator
@@ -98,7 +98,7 @@ namespace aruco
         static cv::Point3f getCameraLocation(const cv::Mat &Rvec,const cv::Mat  &Tvec);
 
         /**Given the intrinsic camera parameters returns the GL_PROJECTION matrix for opengl.
-        * PLease NOTE that when using OpenGL, it is assumed no camera distorsion! So, if it is not true, you should have
+        * PLease NOTE that when using OpenGL, it is assumed no camera distortion! So, if it is not true, you should have
         * undistor image
         *
         * @param orgImgSize size of the original image
@@ -121,7 +121,7 @@ namespace aruco
          * yourCamera->setCustomProjectionMatrix(true, PM);
          * yourCamera->setCustomViewMatrix(true, Ogre::Matrix4::IDENTITY);
          * ...
-         * As in OpenGL, it assumes no camera distorsion
+         * As in OpenGL, it assumes no camera distortion
          */
         void OgreGetProjectionMatrix(cv::Size orgImgSize, cv::Size size, double proj_matrix[16], double gnear,
                                      double gfar, bool invert = false);

@@ -28,16 +28,16 @@ ImageParams::ImageParams(){
 }
 ImageParams& ImageParams::operator=(const ImageParams& IP){
     IP.CameraMatrix.copyTo(CameraMatrix);
-    IP.Distorsion.copyTo(Distorsion);
+    IP.Distortion.copyTo(Distortion);
     CamSize=IP.CamSize;
 
     arrayCamMatrix.resize(IP.arrayCamMatrix.size());
     for(size_t i=0; i<IP.arrayCamMatrix.size(); i++)
         IP.arrayCamMatrix[i].copyTo(arrayCamMatrix[i]);
 
-    arrayDistorsion.resize(IP.arrayDistorsion.size());
-    for(size_t i=0; i<IP.arrayDistorsion.size(); i++)
-        IP.arrayDistorsion[i].copyTo(arrayDistorsion[i]);
+    arrayDistortion.resize(IP.arrayDistortion.size());
+    for(size_t i=0; i<IP.arrayDistortion.size(); i++)
+        IP.arrayDistortion[i].copyTo(arrayDistortion[i]);
 
     arrayRvec.resize(IP.arrayRvec.size());
     for(size_t i=0; i<IP.arrayRvec.size(); i++)
@@ -63,7 +63,7 @@ ImageParams::ImageParams(const ImageParams &IP){
 }
 bool ImageParams::isValid() const
 {
-    return CameraMatrix.rows != 0 && CameraMatrix.cols != 0 && Distorsion.rows != 0 && Distorsion.cols != 0
+    return CameraMatrix.rows != 0 && CameraMatrix.cols != 0 && Distortion.rows != 0 && Distortion.cols != 0
             && CamSize.width != -1 && CamSize.height != -1;
 }
 /**Adjust the parameters to the size of the image indicated
@@ -111,9 +111,9 @@ void ImageParams::undistortPoints(std::vector<cv::Point2f> &points_io, std::vect
     if(cam==0) assert(CameraMatrix.type()==CV_32F);
 
     if(!fisheye_model)
-        cv::undistortPoints ( points_io, *out, getCameraMatrix(cam),  getDistorsion(cam));//results are here normalized. i.e., in range [-1,1]
+        cv::undistortPoints ( points_io, *out, getCameraMatrix(cam),  getDistortion(cam));//results are here normalized. i.e., in range [-1,1]
     else{
-        cv::fisheye::undistortPoints(points_io, *out, CameraMatrix,  Distorsion);
+        cv::fisheye::undistortPoints(points_io, *out, CameraMatrix,  Distortion);
     }
 
     float _fx = fx(cam);
@@ -139,10 +139,10 @@ void ImageParams::undistortPoints(std::vector<cv::Point2f> &points_io, std::vect
 uint64_t ImageParams::getSignature()const{
     Hash Sig;
     Sig+=CameraMatrix;
-    Sig+=Distorsion;
+    Sig+=Distortion;
     Sig.add(CamSize);
     for(auto e:arrayCamMatrix) Sig.add(e);
-    for(auto e:arrayDistorsion) Sig.add(e);
+    for(auto e:arrayDistortion) Sig.add(e);
     for(auto e:arrayRvec) Sig.add(e);
     for(auto e:arrayTvec) Sig.add(e);
     for(auto e:multicams_cs) Sig.add(e);
@@ -208,9 +208,9 @@ void ImageParams::readFromXMLFile(std::string filePath)
     cv::Mat mdist32;
     MDist.convertTo(mdist32, CV_32FC1);
 
-    Distorsion=cv::Mat::zeros(1, 5, CV_32FC1);
+    Distortion=cv::Mat::zeros(1, 5, CV_32FC1);
     for (int i = 0; i < mdist32.total(); i++)
-        Distorsion.ptr<float>(0)[i] = mdist32.ptr<float>(0)[i];
+        Distortion.ptr<float>(0)[i] = mdist32.ptr<float>(0)[i];
 
     CamSize.width = w;
     CamSize.height = h;
@@ -231,7 +231,7 @@ void  ImageParams::readArrayFromXMLFile(const std::string &filePath){
     fs["D_cam0"]>>cam_dist;
     CamSize=cv::Size(w,h);
     cam_matrix.copyTo(CameraMatrix);
-    cam_dist.copyTo(Distorsion);
+    cam_dist.copyTo(Distortion);
 
     int n_cameras=0;
     fs["array_size"]>> n_cameras;
@@ -241,7 +241,7 @@ void  ImageParams::readArrayFromXMLFile(const std::string &filePath){
         fs["img_height_cam"+std::to_string(i)]>>h;
         multicams_cs.push_back(cv::Size(w,h));
         fs["D_cam"+std::to_string(i)]>>cam_dist;
-        arrayDistorsion.push_back(cam_dist);
+        arrayDistortion.push_back(cam_dist);
         fs["M_cam"+std::to_string(i)]>>cam_matrix;
         arrayCamMatrix.push_back(cam_matrix);
         fs["R_cam0_cam"+std::to_string(i)]>>rvec;
@@ -255,7 +255,7 @@ void  ImageParams::readArrayFromXMLFile(const std::string &filePath){
 
 
 std::ostream & operator<<(std::ostream &str,const ImageParams &ip){
-    str<<ip.CameraMatrix<<std::endl<<ip.Distorsion<<std::endl<<ip.CamSize<<std::endl<<"bl="<<ip.bl<<" rgb_depthscale="<<ip.rgb_depthscale<<" fisheye_model="<<ip.fisheye_model<< std::endl;
+    str<<ip.CameraMatrix<<std::endl<<ip.Distortion<<std::endl<<ip.CamSize<<std::endl<<"bl="<<ip.bl<<" rgb_depthscale="<<ip.rgb_depthscale<<" fisheye_model="<<ip.fisheye_model<< std::endl;
     return str;
 }
 /**Saves this to a file
@@ -266,7 +266,7 @@ void ImageParams::saveToXMLFile(std::string path )
         fs << "image_width" << CamSize.width;
         fs << "image_height" << CamSize.height;
         fs << "camera_matrix" << CameraMatrix;
-        fs << "distortion_coefficients" << Distorsion;
+        fs << "distortion_coefficients" << Distortion;
         fs << "baseline"<<bl;
         fs << "rgb_depthscale"<<rgb_depthscale;
         fs << "fisheye_model"<<fisheye_model;
@@ -274,12 +274,12 @@ void ImageParams::saveToXMLFile(std::string path )
 
 void ImageParams::toStream(std::ostream &str) const {
     toStream__(CameraMatrix,str);
-    toStream__(Distorsion,str);
+    toStream__(Distortion,str);
     str.write((char*)&CamSize,sizeof(CamSize));
     io_write<uint32_t>(arrayCamMatrix.size(),str);
     for(size_t i=0;i<arrayCamMatrix.size();i++){
         toStream__(arrayCamMatrix[i],str);
-        toStream__(arrayDistorsion[i],str);
+        toStream__(arrayDistortion[i],str);
         toStream__(arrayRvec[i],str);
         toStream__(arrayTvec[i],str);
     }
@@ -292,16 +292,16 @@ void ImageParams::toStream(std::ostream &str) const {
 
 void ImageParams::fromStream(std::istream &str) {
     fromStream__(CameraMatrix,str);
-    fromStream__(Distorsion,str);
+    fromStream__(Distortion,str);
     str.read((char*)&CamSize,sizeof(CamSize));
     size_t s=io_read<uint32_t>(str);
     arrayCamMatrix.resize(s);
-    arrayDistorsion.resize(s);
+    arrayDistortion.resize(s);
     arrayRvec.resize(s);
     arrayTvec.resize(s);
     for(size_t i=0;i<s;i++){
         fromStream__(arrayCamMatrix[i],str);
-        fromStream__(arrayDistorsion[i],str);
+        fromStream__(arrayDistortion[i],str);
         fromStream__(arrayRvec[i],str);
         fromStream__(arrayTvec[i],str);
     }

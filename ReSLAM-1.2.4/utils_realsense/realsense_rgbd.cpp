@@ -25,7 +25,7 @@ reslam::ImageParams getRealSenseImageParams(const std::shared_ptr<rs2::pipeline>
     rs2_intrinsics intr = pipe->get_active_profile().get_stream(RS2_STREAM_COLOR).as<rs2::video_stream_profile>().get_intrinsics();
 
     IP.CameraMatrix= (cv::Mat_<float>(3,3) <<  intr.fx,0,intr.ppx,0,intr.fy,intr.ppy,0,0,1);
-    IP.Distorsion= (cv::Mat_<float>(1,5) <<  intr.coeffs[0],intr.coeffs[1], intr.coeffs[2],intr.coeffs[3],intr.coeffs[4]);
+    IP.Distortion= (cv::Mat_<float>(1,5) <<  intr.coeffs[0],intr.coeffs[1], intr.coeffs[2],intr.coeffs[3],intr.coeffs[4]);
     IP.CamSize=cv::Size(intr.width,intr.height);
     IP.bl=0.095;//camera base line
     IP.rgb_depthscale=get_depth_scale(pipe->get_active_profile().get_device());//scale factor to convert into the desired scale

@@ -266,7 +266,7 @@ private:
          *
          * @param input input color image
          * @param camMatrix intrinsic camera information.
-         * @param distCoeff camera distorsion coefficient. If set Mat() if is assumed no camera distorion
+         * @param distCoeff camera distortion coefficient. If set Mat() if is assumed no camera distorion
          * @param markerSizeMeters size of the marker sides expressed in meters. If not specified this value, the
          * extrinsics of the markers are not detected.
          * @param setYPerperdicular If set the Y axis will be perpendicular to the surface. Otherwise, it will be the Z
@@ -302,7 +302,7 @@ private:
          * @param input input color image
          * @param detectedMarkers output vector with the markers detected
          * @param camMatrix intrinsic camera information.
-         * @param distCoeff camera distorsion coefficient. If set Mat() if is assumed no camera distorion
+         * @param distCoeff camera distortion coefficient. If set Mat() if is assumed no camera distorion
          * @param markerSizeMeters size of the marker sides expressed in meters
          * @param setYPerperdicular If set the Y axis will be perpendicular to the surface. Otherwise, it will be the Z
          * axis

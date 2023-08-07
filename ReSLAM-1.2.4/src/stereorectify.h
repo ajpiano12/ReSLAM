@@ -101,7 +101,7 @@ private:
 #ifndef STANDALONE
         imgParams.CamSize=cv::Size(w,h);
         ncm[0].convertTo(imgParams.CameraMatrix,CV_32F);
-        imgParams.Distorsion=cv::Mat::zeros(1,5,CV_32F);
+        imgParams.Distortion=cv::Mat::zeros(1,5,CV_32F);
         imgParams.bl=cv::norm(T);
 #endif
     }

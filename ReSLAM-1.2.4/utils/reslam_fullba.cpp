@@ -67,7 +67,7 @@ int main(int argc,char **argv){
         map<uint32_t, g2oba::SE3Pose * > kf_poses;
         for(auto &kf:TheMap.keyframes){
             if(!camera->isSet()){
-                camera->setParams(kf.imageParams.CameraMatrix,kf.imageParams.Distorsion);
+                camera->setParams(kf.imageParams.CameraMatrix,kf.imageParams.Distortion);
                 Optimizer->addVertex(camera);
             }
             g2oba::SE3Pose * pose= new g2oba::SE3Pose(kf.idx, kf.pose_f2g.getRvec(),kf.pose_f2g.getTvec());
@@ -181,7 +181,7 @@ int main(int argc,char **argv){
             TheMap.keyframes[pose.first].imageParams.CameraMatrix.at<float>(0,2)=camera->cx();
             TheMap.keyframes[pose.first].imageParams.CameraMatrix.at<float>(1,2)=camera->cy();
             for(int p=0;p<5;p++)
-                TheMap.keyframes[pose.first].imageParams.Distorsion.ptr<float>(0)[p]=camera->dist()[p];
+                TheMap.keyframes[pose.first].imageParams.Distortion.ptr<float>(0)[p]=camera->dist()[p];
         }
 //        //remove weak links
 //        for(auto &p:projectionsInGraph){
@@ -195,7 +195,7 @@ int main(int argc,char **argv){
 
         cout<<"Final Camera Params "<<endl;
         cout<<TheMap.keyframes.begin()->imageParams.CameraMatrix<<endl;
-        cout<<TheMap.keyframes.begin()->imageParams.Distorsion<<endl;
+        cout<<TheMap.keyframes.begin()->imageParams.Distortion<<endl;
 
         TheMap.saveToFile(argv[2]);
 

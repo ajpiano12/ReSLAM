@@ -435,7 +435,7 @@ Marker3DInfo::Marker3DInfo(int _id):id(_id){}
         str >> dictionary;
     }
     pair<cv::Mat, cv::Mat> MarkerMap::calculateExtrinsics(const std::vector<aruco::Marker>& markers, float markerSize,
-                                                          cv::Mat CameraMatrix, cv::Mat Distorsion)
+                                                          cv::Mat CameraMatrix, cv::Mat Distortion)
     {
         vector<cv::Point2f> p2d;
         MarkerMap m_meters;
@@ -459,7 +459,7 @@ Marker3DInfo::Marker3DInfo(int _id):id(_id){}
         cv::Mat rvec, tvec;
         if (p2d.size() != 0)
         {  // no points in the vector
-            cv::solvePnPRansac(p3d, p2d, CameraMatrix, Distorsion, rvec, tvec);
+            cv::solvePnPRansac(p3d, p2d, CameraMatrix, Distortion, rvec, tvec);
         }
         return make_pair(rvec, tvec);
     }
