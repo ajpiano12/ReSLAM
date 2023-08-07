@@ -5,3 +5,4 @@ cd build
 cmake ../ -DBUILD_GUI=ON
 make -j4
 sudo make install
+sudo ldconfig
