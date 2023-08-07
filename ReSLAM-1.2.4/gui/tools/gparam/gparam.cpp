@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <stdint.h>
 #include <cassert>
+#include <limits>
+
 using namespace std;
 namespace gparam
 {
