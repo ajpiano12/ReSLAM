@@ -5,4 +5,7 @@ cd build
 cmake ../ -DBUILD_GUI=ON
 make -j4
 sudo make install
+cd ../3rdparty/vocabularies
+mkdir /usr/share/ucoslam
+sudo cp orb.fbow /usr/share/ucoslam/
 sudo ldconfig
